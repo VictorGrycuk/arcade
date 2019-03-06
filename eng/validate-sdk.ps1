@@ -51,10 +51,18 @@ function MoveArtifactsToValidateSdkFolder([string]$artifactsDir, [string]$valida
     if (!(Test-Path -Path $artifactsDir)) {
         Write-Host "Looks like '$artifactsDir' does not exist!"
     }
-    
-    dir $ArtifactsDir
 
-    Rename-Item -Path $artifactsDir -NewName $validateSdkFolderName -Force
+    for($i = 0; $i -lt 5; $i++)
+    {
+        try {
+            Rename-Item -Path $artifactsDir -NewName $validateSdkFolderName -Force   
+            break
+        }
+        catch {
+            Write-Host "Error renaming item. Trying again."
+            Start-Sleep -s 2
+        }       
+    }
   
     if (!(Test-Path -Path $artifactsDir)) {
         Create-Directory $artifactsDir
