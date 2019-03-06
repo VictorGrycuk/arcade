@@ -14,11 +14,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Client\CSharp\Microsoft.DotNet.Helix.Client.csproj" />
-    <ProjectReference Include="..\JobSender\Microsoft.DotNet.Helix.JobSender.csproj" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'"> 
     <Compile Include="..\..\Common\AssemblyResolver.cs" /> 
   </ItemGroup> 

@@ -17,10 +17,6 @@
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="$(McMasterExtensionsCommandLineUtils)" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Microsoft.Cci.Extensions\Microsoft.Cci.Extensions.csproj" />
-  </ItemGroup>
-
   <Import Project="$(RepoRoot)eng\BuildTask.targets" />
 
 </Project>

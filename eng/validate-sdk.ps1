@@ -46,6 +46,14 @@ function AddSourceToNugetConfig([string]$nugetConfigPath, [string]$source)
 
 function MoveArtifactsToValidateSdkFolder([string]$artifactsDir, [string]$validateSdkFolderName, [string]$repoRoot)
 {
+    Write-Host "Moving '$artifactsDir' to '$validateSdkFolderName' "
+
+    if (!(Test-Path -Path $artifactsDir)) {
+        Write-Host "Looks like '$artifactsDir' does not exist!"
+    }
+    
+    dir $ArtifactsDir
+
     Rename-Item -Path $artifactsDir -NewName $validateSdkFolderName -Force
   
     if (!(Test-Path -Path $artifactsDir)) {
