@@ -46,17 +46,7 @@ function AddSourceToNugetConfig([string]$nugetConfigPath, [string]$source)
 
 function MoveArtifactsToValidateSdkFolder([string]$artifactsDir, [string]$validateSdkFolderName, [string]$repoRoot)
 {
-    for($i = 0; $i -lt 50; $i++)
-    {
-        try {
-            Rename-Item -Path $artifactsDir -NewName $validateSdkFolderName -Force   
-            break
-        }
-        catch {
-            Write-Host "Error renaming item. Trying again. Attempt '$i' of 5."
-            Start-Sleep -s 5
-        }       
-    }
+    Rename-Item -Path $artifactsDir -NewName $validateSdkFolderName -Force   
   
     if (!(Test-Path -Path $artifactsDir)) {
         Create-Directory $artifactsDir
