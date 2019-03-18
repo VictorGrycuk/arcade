@@ -18,9 +18,11 @@ variables:
   - name: _TeamName
     value: DotNetCore
   - ${{ if eq(variables._DotNetArtifactsCategory, '') }}:
-    - _DotNetArtifactsCategory: .NETCore
+    - name: _DotNetArtifactsCategory
+      value: .NETCore
   - ${{ if and(ne(variables._PublishUsingPipelines, 'true'), ne(variables._PublishUsingPipelines, 'false')) }}:
-    - _PublishUsingPipelines: false
+    - name: _PublishUsingPipelines
+      value: false
 
 resources:
   containers:
