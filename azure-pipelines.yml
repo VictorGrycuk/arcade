@@ -17,9 +17,9 @@ variables:
   # Cannot use key:value syntax in root defined variables
   - name: _TeamName
     value: DotNetCore
-  - ${{ if eq(variables._DotNetArtifactsCategory, null) }}:
+  - ${{ if eq(variables._DotNetArtifactsCategory, '') }}:
     - _DotNetArtifactsCategory: .NETCore
-  - ${{ if eq(variables._PublishUsingPipelines, null) }}:
+  - ${{ if and(ne(variables._PublishUsingPipelines, 'true'), ne(variables._PublishUsingPipelines, 'false')) }}
     - _PublishUsingPipelines: false
 
 resources:
