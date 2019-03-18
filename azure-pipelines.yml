@@ -19,7 +19,7 @@ variables:
     value: DotNetCore
   - ${{ if eq(variables._DotNetArtifactsCategory, '') }}:
     - _DotNetArtifactsCategory: .NETCore
-  - ${{ if and(ne(variables._PublishUsingPipelines, 'true'), ne(variables._PublishUsingPipelines, 'false')) }}
+  - ${{ if and(ne(variables._PublishUsingPipelines, 'true'), ne(variables._PublishUsingPipelines, 'false')) }}:
     - _PublishUsingPipelines: false
 
 resources:
