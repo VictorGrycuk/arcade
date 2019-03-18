@@ -17,10 +17,6 @@ variables:
   # Cannot use key:value syntax in root defined variables
   - name: _TeamName
     value: DotNetCore
-  - name: _PublishUsingPipelines
-    value: true
-  - name: _DotNetArtifactsCategory
-    value: .NETCore
 
 resources:
   containers:
