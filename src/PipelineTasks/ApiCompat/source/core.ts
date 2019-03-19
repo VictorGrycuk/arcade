@@ -45,6 +45,7 @@ export class Core {
     }
 
     public runWithCustomError(command: string): void{
+        command = this.addOptions(command);
         try {
             const result = execSync(command).toString();
 
@@ -61,6 +62,22 @@ export class Core {
         }
     }
 
+    public addOptions(command: string): string{
+        const resolveFx = this.config.parameters.resolveFx.value;
+        const warnOnIncorrectVersion = this.config.parameters.warnOnIncorrectVersion.value;
+        const warnOnMissingAssemblies = this.config.parameters.warnOnMissingAssemblies.value;
+
+        if (resolveFx) {
+            command += " --resolve-fx";
+        }
+        if (warnOnIncorrectVersion) {
+            command += " --warn-on-incorrect-version";
+        }
+        if (warnOnMissingAssemblies) {
+            command += " --warn-on-missing-assemblies";
+        }
+        return command;
+    }
 
     private LogError(message: string): void {
         tl.setResult(tl.TaskResult.Failed, message);
