@@ -23,7 +23,7 @@ export class configuration {
         } else {
             this.getParameters(this.getCliParameter);
         }
-        
+
         this.getPrefix();
 
         this.ApiCompatPath = join(__dirname, 'ApiCompat', 'Microsoft.DotNet.ApiCompat.exe');

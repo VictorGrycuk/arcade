@@ -1,6 +1,7 @@
 import { configuration } from "./configuration";
 import { Core } from "./core";
 import { join } from 'path'
+import tl from 'azure-pipelines-task-lib';
 
 run();
 
@@ -12,10 +13,10 @@ function run(): void {
     const inputFiles: string[] = core.getInputFiles();
     
     //const placeholder: string = config.parameters.packageSubFolder.value;
-    const placeholder: string = join(__dirname, config.parameters.nugetPackageName.value);
+    //const placeholder: string = join(__dirname, config.parameters.nugetPackageName.value);
     
     // run ApiCompat
-    console.log(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${placeholder}"`);
-    const result: string = core.runPlain(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${config.parameters.implFolder.value}"`);
+    //console.log(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${placeholder}"`);
+    const result: string = core.runPlain(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${ tl.getInput('implFolder') }"`);
     console.log(result);
 }

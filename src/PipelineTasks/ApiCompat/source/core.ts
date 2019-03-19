@@ -57,8 +57,8 @@ export class Core {
 
     public getInputFiles(): string[] {
         const filesName: string[] = [];
-        this.config.parameters.inputFilesName.value.split(' ').forEach(file => {
-            const fullFilePath: string = join(this.config.parameters.inputRootFolder.value, file);
+        this.config.parameters.contractsFileName.value.split(' ').forEach(file => {
+            const fullFilePath: string = join(this.config.parameters.contractsRootFolder.value, file);
             if (existsSync(fullFilePath)) {
                 filesName.push(fullFilePath);
             }
