@@ -67,9 +67,9 @@ export class Core {
         const warnOnIncorrectVersion = this.config.parameters.warnOnIncorrectVersion.value;
         const warnOnMissingAssemblies = this.config.parameters.warnOnMissingAssemblies.value;
 
-        command = resolveFx? ' --resolve-fx' : '';
-        command = warnOnIncorrectVersion? ' --warn-on-incorrect-version' : '';
-        command = warnOnMissingAssemblies? ' --warn-on-missing-assemblies' : '';
+        command += resolveFx? ' --resolve-fx' : '';
+        command += warnOnIncorrectVersion? ' --warn-on-incorrect-version' : '';
+        command += warnOnMissingAssemblies? ' --warn-on-missing-assemblies' : '';
 
         return command;
     }
