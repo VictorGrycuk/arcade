@@ -5,6 +5,7 @@ import { configuration } from "./configuration";
 import { IExecOptions } from 'azure-pipelines-task-lib/toolrunner';
 import { execSync } from "child_process";
 import { basename } from "path";
+import { throws } from 'assert';
 const fs = require('fs');
 const download = require('download');
 const unzip = require('unzip');
@@ -38,6 +39,27 @@ export class Core {
     public runPlain(command: string): string {
         return execSync(command).toString();
     }
+
+    private parseMessage (message: string) {
+        return Number((message.split(':'))[1].trim()) === 0;
+    }
+
+    public runWithCustomError(command: string): void{
+        try {
+            const result = execSync(command).toString();
+
+            if (this.parseMessage(result)) {
+                console.log(result);
+            }
+            else {
+                this.LogError(`There were differences between the assemblies`)
+            }
+        }
+        catch (error) {
+            this.LogError(`A problem ocurred: ${error.message}`);
+        }
+    }
+
 
     private LogError(message: string): void {
         tl.setResult(tl.TaskResult.Failed, message);
@@ -79,6 +101,7 @@ export class Core {
             fs.unlinkSync(zipPath);
         });
     }
+    
 
     private unzip(zipName: string, dest: string, targetFile: string) {
         fs.createReadStream(zipName)

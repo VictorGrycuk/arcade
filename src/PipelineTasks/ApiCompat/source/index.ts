@@ -16,6 +16,5 @@ function run(): void {
     
     // run ApiCompat
     console.log(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${placeholder}"`);
-    const result: string = core.runPlain(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${config.parameters.implFolder.value}"`);
-    console.log(result);
+    core.runWithCustomError(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${config.parameters.implFolder.value}"`);
 }
