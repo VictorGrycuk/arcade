@@ -15,6 +15,6 @@ function run(): void {
     const placeholder: string = join(__dirname, config.parameters.nugetPackageName.value);
     
     // run ApiCompat
-    console.log(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${placeholder}"`);
+    console.log(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${config.parameters.implFolder.value}"`);
     core.runWithCustomError(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${config.parameters.implFolder.value}"`);
 }
