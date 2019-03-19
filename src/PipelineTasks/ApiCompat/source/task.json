@@ -1,0 +1,66 @@
+{
+    "id": "41f908c8-2199-49b3-b988-788c35c7964a",
+    "name": "binaries-comparer",
+    "friendlyName": "Binaries Comparer",
+    "description": "Binaries Comparer",
+    "helpMarkDown": "",
+    "category": "Utility",
+    "author": "Southworks-pipelines-test",
+    "version": {
+        "Major": 0,
+        "Minor": 1,
+        "Patch": 0
+    },
+    "instanceNameFormat": "Compare Binaries",
+    "inputs": [
+        {
+            "name": "contractsRootFolder",
+            "type": "filepath",
+            "label": "Contracts root folder",
+            "required": true,
+            "helpMarkDown": "Path to the folder that contains the input binaries"
+        },
+        {
+            "name": "contractsFileName",
+            "type": "text",
+            "label": "Contracts files name",
+            "required": true,
+            "helpMarkDown": "List of the names of the binaries to compare, separated by space"
+        },
+        {
+            "name": "implFolder",
+            "type": "filepath",
+            "label": "Implementaiton assemblies folder",
+            "required": true,
+            "helpMarkDown": "Sub directory inside the package folder where the binary can be found"
+        },
+        {
+            "name": "resolveFx",
+            "type": "boolean",
+            "label": "Resolve Fx",
+            "required": true,
+            "helpMarkDown": "If a contract or implementation dependency cannot be found in the given directories, fallback to try to resolve against the framework directory on the machine"
+        },
+        {
+            "name": "warnOnIncorrectVersion",
+            "type": "boolean",
+            "label": "Warn on incorrect version",
+            "required": true,
+            "defaultValue": false,
+            "helpMarkDown": "Warn if the contract version number doesn't match the found implementation version number"
+        },
+        {
+            "name": "warnOnMissingAssemblies",
+            "type": "boolean",
+            "label": "Warn on missing assemblies",
+            "required": true,
+            "defaultValue": false,
+            "helpMarkDown": "Warn if the contract assembly cannot be found in the implementation directories. Default is to error and not do anlysis"
+        }
+    ],
+    "execution": {
+        "Node": {
+            "target": "index.js"
+        }
+    }
+}
