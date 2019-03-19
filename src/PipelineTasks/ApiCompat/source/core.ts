@@ -52,6 +52,7 @@ export class Core {
                 console.log(result);
             }
             else {
+                console.log(result);
                 this.LogError(`There were differences between the assemblies`)
             }
         }

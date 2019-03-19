@@ -1,6 +1,5 @@
 import { configuration } from "./configuration";
 import { Core } from "./core";
-import { join } from 'path'
 import tl from 'azure-pipelines-task-lib';
 
 run();
