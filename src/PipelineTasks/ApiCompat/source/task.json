@@ -35,6 +35,13 @@
             "helpMarkDown": "Sub directory inside the package folder where the binary can be found"
         },
         {
+            "name": "failOnIssue",
+            "type": "boolean",
+            "label": "Fails on Issues",
+            "required": true,
+            "helpMarkDown": "If issues are found when comparing, the task will fail"
+        },
+        {
             "name": "resolveFx",
             "type": "boolean",
             "label": "Resolve Fx",

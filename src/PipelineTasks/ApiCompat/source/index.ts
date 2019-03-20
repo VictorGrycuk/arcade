@@ -16,5 +16,10 @@ function run(): void {
     
     // run ApiCompat
     //console.log(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${placeholder}"`);
-    core.runWithCustomError(`"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${ tl.getInput('implFolder') }"`);
+    const command = `"${config.ApiCompatPath}" "${inputFiles.join(',')}" --impl-dirs "${ tl.getInput('implFolder') }"`;
+    if (tl.getInput('failOnIssue') === 'true') {
+        core.runWithCustomError(command);
+    } else {
+        core.runPlain(command);
+    }
 }
