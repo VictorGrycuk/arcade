@@ -47,13 +47,15 @@ export class Core {
     public runWithCustomError(command: string): void{
         command = this.addOptions(command);
         try {
-            const result = execSync(command).toString();
+            const result: string[] = this.parseResult(execSync(command).toString());
 
-            if (this.parseMessage(result)) {
-                console.log(result);
+            if (this.parseMessage(result.filter(r => r.includes("Total Issues")).toString())) {
+                console.log(result[0]);
+                console.log(result[1],"Green");
             }
             else {
-                console.log(result);
+                console.log(result[0]);
+                console.log(result[1],"Red");
                 this.LogError(`There were differences between the assemblies`)
             }
         }
@@ -72,6 +74,14 @@ export class Core {
         command += warnOnMissingAssemblies? ' --warn-on-missing-assemblies' : '';
 
         return command;
+    }
+
+    public parseResult(message: string): string[] {
+        const indexOfResult: number = message.indexOf("Total Issues");
+        const body: string = message.substring(0, indexOfResult-1);
+        const result: string = message.substring(indexOfResult, message.length); 
+        
+        return [body, result];
     }
 
     private LogError(message: string): void {
