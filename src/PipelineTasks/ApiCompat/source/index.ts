@@ -16,9 +16,9 @@ function run(): void {
     const command = `"${ ApiCompatPath }" "${ inputFiles }" --impl-dirs "${ getInput('implFolder') }"`;
 
     if (getInput('failOnIssue') === 'true') {
-        runWithCustomError(command);
+        console.log(runWithCustomError(command));
     } else {
-        runPlain(command);
+        console.log(runPlain(command));
     }
 }
 
@@ -39,21 +39,21 @@ function runPlain(command: string): string {
     return execSync(command).toString();
 }
 
-function runWithCustomError(command: string): void{
+function runWithCustomError(command: string): string {
     command = addOptions(command);
+    var result: string = '';
     try {
-        const result = execSync(command).toString();
+        result = execSync(command).toString();
 
-        if (parseMessage(result)) {
-            console.log(result);
+        if (!parseMessage(result)) {
+            setResult(TaskResult.Failed, 'There were differences between the assemblies');
         }
-        else {
-            console.log(result);
-            LogError(`There were differences between the assemblies`)
-        }
+
+        return result;
     }
     catch (error) {
-        LogError(`A problem ocurred: ${error.message}`);
+        setResult(TaskResult.Failed, `A problem ocurred: ${error.message}`);
+        return result;
     }
 }
 
@@ -67,8 +67,4 @@ function addOptions(command: string): string{
     command += getInput('warnOnMissingAssemblies')? ' --warn-on-missing-assemblies' : '';
 
     return command;
-}
-
-function LogError(message: string): void {
-    setResult(TaskResult.Failed, message);
 }
