@@ -8,6 +8,6 @@ export default class CommandLineResult {
     }
 
     private parseMessage(message: string): number {
-        return Number((message.split(':'))[1].trim());
+        return parseInt((message.split(':'))[1].trim(), 10);
     }
 }
