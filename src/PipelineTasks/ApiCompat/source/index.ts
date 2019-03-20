@@ -14,9 +14,9 @@ function run(): void {
     const command = `"${ApiCompatPath}" "${inputFiles}" --impl-dirs "${getInput('implFolder')}"`;
 
     if (getInput('failOnIssue') === 'true') {
-        console.log(runWithError(command));
+        runWithError(command);
     } else {
-        console.log(runWithWarning(command));
+        runWithWarning(command);
     }
 }
 
