@@ -35,10 +35,16 @@ function getInputFiles(): string {
 
 function runWithWarning(command: string): void {
     let result = parseResult(execSync(command).toString());
-
-    console.log(result.body);
-    console.log("\x1b[33m", "Total Issues : " + result.totalIssues);
-    setResult(TaskResult.SucceededWithIssues, `There were ${ result.totalIssues } differences between the assemblies`);}
+    if (result.totalIssues > 0) {
+            console.log(result.body);
+            console.log("\x1b[33m", "Total Issues : " + result.totalIssues);
+            setResult(TaskResult.SucceededWithIssues, `There were ${ result.totalIssues } differences between the assemblies`);
+    } else {
+        console.log(result.body);
+        console.log("\x1b[32m", "Total Issues : " +  result.totalIssues);
+        setResult(TaskResult.Succeeded, `There were no differences between the assemblies`);
+    }
+}
 
 function runWithError(command: string): void {
     let result: CommandLineResult;
