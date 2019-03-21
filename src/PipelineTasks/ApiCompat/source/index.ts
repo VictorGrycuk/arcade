@@ -9,10 +9,15 @@ run();
 function run(): void {
     // Create ApiCompat path
     const ApiCompatPath = join(__dirname, 'ApiCompat', 'Microsoft.DotNet.ApiCompat.exe');
-    // Get the binaries to compare
+    
+    // Show the ApiCompat version
+    console.log(execSync(`"${ApiCompatPath}" --version`).toString());
+    
+    // Get the binaries to compare and create the command to run
     const inputFiles: string = getInputFiles();
     const command = `"${ApiCompatPath}" "${inputFiles}" --impl-dirs "${getInput('implFolder')}"`;
 
+    // Run the ApiCompat command
     if (getInput('failOnIssue') === 'true') {
         runWithError(command);
     } else {
