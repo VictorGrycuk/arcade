@@ -37,18 +37,8 @@ function getInputFiles(): string {
 function runCommand(command: string): void {
     let result = parseResult(execSync(command).toString());
     
-    const compatResult: TaskResult = result.totalIssues === 0
-        ? TaskResult.Succeeded
-        : getInput('failOnIssue') === 'true'
-            ? TaskResult.Failed
-            : TaskResult.SucceededWithIssues;
-
-    const colorCode = result.totalIssues === 0
-        ? "\x1b[32m"
-        : getInput('failOnIssue') === 'true'
-            ? "\x1b[31m"
-            : "\x1b[33m";
-    
+    const compatResult: TaskResult = getCompattibilityResult(result.totalIssues);
+    const colorCode: string = getColorCode(result.totalIssues);
     const resultText = result.totalIssues != 0 ?
         `There were ${ result.totalIssues } differences between the assemblies` :
         `No differences were found between the assemblies` ;
@@ -63,6 +53,22 @@ function getOptions() {
     command += getInput('warnOnMissingAssemblies') ? ' --warn-on-missing-assemblies' : '';
 
     return command;
+}
+
+function getCompattibilityResult(totalIssues: number): TaskResult {
+    return totalIssues === 0
+        ? TaskResult.Succeeded
+        : getInput('failOnIssue') === 'true'
+            ? TaskResult.Failed
+            : TaskResult.SucceededWithIssues;
+}
+
+function getColorCode(totalIssues: number): string {
+    return totalIssues === 0
+        ? "\x1b[32m"
+        : getInput('failOnIssue') === 'true'
+            ? "\x1b[31m"
+            : "\x1b[33m";
 }
 
 function parseResult(message: string): CommandLineResult {
