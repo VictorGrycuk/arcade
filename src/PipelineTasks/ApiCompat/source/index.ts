@@ -37,7 +37,7 @@ function runWithWarning(command: string): void {
     let result = parseResult(execSync(command).toString());
 
     console.log(result.body);
-    console.log("\x1b[33m",result.totalIssues);
+    console.log("\x1b[33m", "Total Issues : " + result.totalIssues);
     setResult(TaskResult.SucceededWithIssues, `There were ${ result.totalIssues } differences between the assemblies`);}
 
 function runWithError(command: string): void {
@@ -49,11 +49,11 @@ function runWithError(command: string): void {
 
         if (result.totalIssues > 0) {
             console.log(result.body);
-            console.log("\x1b[31m", result.totalIssues);
+            console.log("\x1b[31m", "Total Issues : " + result.totalIssues);
             setResult(TaskResult.Failed, `There were ${result} differences between the assemblies`);
         } else {
             console.log(result.body);
-            console.log("\x1b[32m", result.totalIssues);
+            console.log("\x1b[32m", "Total Issues : " +  result.totalIssues);
             setResult(TaskResult.Succeeded, `There were no differences between the assemblies`);
         }
     } catch (error) {
@@ -71,6 +71,8 @@ function addOptions(command: string): string {
 
 function parseResult(message: string): CommandLineResult {
     const indexOfResult: number = message.indexOf("Total Issues");
-    return new CommandLineResult(message.substring(0, indexOfResult - 1),
-        message.substring(indexOfResult));
+    const a = new CommandLineResult(message.substring(0, indexOfResult - 1),
+    message.substring(indexOfResult));
+    console.log( a );
+    return a;
 }

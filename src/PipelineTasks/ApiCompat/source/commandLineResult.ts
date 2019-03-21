@@ -2,7 +2,7 @@ export default class CommandLineResult {
     totalIssues: number;
     body: string;
 
-    constructor( totalIssuesMessage: string, body: string,) {
+    constructor( body: string, totalIssuesMessage: string) {
         this.totalIssues = this.parseMessage(totalIssuesMessage);
         this.body = body;
     }
