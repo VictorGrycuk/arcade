@@ -71,8 +71,6 @@ function addOptions(command: string): string {
 
 function parseResult(message: string): CommandLineResult {
     const indexOfResult: number = message.indexOf("Total Issues");
-    const a = new CommandLineResult(message.substring(0, indexOfResult - 1),
+    return new CommandLineResult(message.substring(0, indexOfResult - 1),
     message.substring(indexOfResult));
-    console.log( a );
-    return a;
 }
