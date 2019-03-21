@@ -15,14 +15,10 @@ function run(): void {
     
     // Get the binaries to compare and create the command to run
     const inputFiles: string = getInputFiles();
-    const command = `"${ApiCompatPath}" "${inputFiles}" --impl-dirs "${getInput('implFolder')}"`;
+    const command = `"${ApiCompatPath}" "${inputFiles}" --impl-dirs "${getInput('implFolder')}" ${getOptions()}`;
 
     // Run the ApiCompat command
-    if (getInput('failOnIssue') === 'true') {
-        runWithError(command);
-    } else {
-        runWithWarning(command);
-    }
+    runCommand(command);
 }
 
 function getInputFiles(): string {
@@ -38,42 +34,31 @@ function getInputFiles(): string {
     return filesName.join(',');
 }
 
-function runWithWarning(command: string): void {
+function runCommand(command: string): void {
     let result = parseResult(execSync(command).toString());
-    if (result.totalIssues > 0) {
-            console.log(result.body);
-            console.log("\x1b[33m", "Total Issues : " + result.totalIssues);
-            setResult(TaskResult.SucceededWithIssues, `There were ${ result.totalIssues } differences between the assemblies`);
-    } else {
-        console.log(result.body);
-        console.log("\x1b[32m", "Total Issues : " +  result.totalIssues);
-        setResult(TaskResult.Succeeded, `There were no differences between the assemblies`);
-    }
+    
+    const compatResult: TaskResult = result.totalIssues === 0
+        ? TaskResult.Succeeded
+        : getInput('failOnIssue') === 'true'
+            ? TaskResult.Failed
+            : TaskResult.SucceededWithIssues;
+
+    const colorCode = result.totalIssues === 0
+        ? "\x1b[32m"
+        : getInput('failOnIssue') === 'true'
+            ? "\x1b[31m"
+            : "\x1b[33m";
+    
+    const resultText = result.totalIssues != 0 ?
+        `There were ${ result.totalIssues } differences between the assemblies` :
+        `No differences were found between the assemblies` ;
+    
+    console.log(result.body + colorCode + 'Total Issues : ' + result.totalIssues);
+    setResult(compatResult, resultText);
 }
 
-function runWithError(command: string): void {
-    let result: CommandLineResult;
-
-    command = addOptions(command);
-    try {
-        result = parseResult(execSync(command).toString());
-
-        if (result.totalIssues > 0) {
-            console.log(result.body);
-            console.log("\x1b[31m", "Total Issues : " + result.totalIssues);
-            setResult(TaskResult.Failed, `There were ${result} differences between the assemblies`);
-        } else {
-            console.log(result.body);
-            console.log("\x1b[32m", "Total Issues : " +  result.totalIssues);
-            setResult(TaskResult.Succeeded, `There were no differences between the assemblies`);
-        }
-    } catch (error) {
-        setResult(TaskResult.Failed, `A problem ocurred: ${error.message}`);
-    }
-}
-
-function addOptions(command: string): string {
-    command += getInput('resolveFx') ? ' --resolve-fx' : '';
+function getOptions() {
+    var command = getInput('resolveFx') ? ' --resolve-fx' : '';
     command += getInput('warnOnIncorrectVersion') ? ' --warn-on-incorrect-version' : '';
     command += getInput('warnOnMissingAssemblies') ? ' --warn-on-missing-assemblies' : '';
 
@@ -83,5 +68,5 @@ function addOptions(command: string): string {
 function parseResult(message: string): CommandLineResult {
     const indexOfResult: number = message.indexOf("Total Issues");
     return new CommandLineResult(message.substring(0, indexOfResult - 1),
-    message.substring(indexOfResult));
+        message.substring(indexOfResult));
 }
