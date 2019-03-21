@@ -2,7 +2,7 @@
      "manifestVersion": 1,
     "id": "binaries-comparer",
     "name": "Binaries Comparer",
-    "version": "0.0.13",
+    "version": "0.0.41",
     "publisher": "vgrycuk-testing",
     "targets": [
         {

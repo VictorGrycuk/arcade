@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join, parse } from 'path'
 import { getInput, setResult, TaskResult } from 'azure-pipelines-task-lib';
 import { execSync } from "child_process";
 import { existsSync } from 'fs';
@@ -33,14 +33,16 @@ const getInputFiles = (): string => {
 }
 
 const runCommand = (command: string): void => {
-    const result = parseResult(execSync(command).toString());
-    const compatResult: TaskResult = getCompattibilityResult(result.totalIssues);
-    const colorCode: string = getColorCode(result.totalIssues);
-    const resultText = result.totalIssues != 0 ?
-        `There were ${ result.totalIssues } differences between the assemblies` :
+    const result = execSync(command).toString();
+    const totalIssues: number = getTotalIssues(result, result.indexOf("Total Issues"));
+    const body: string = getBody(result, result.indexOf("Total Issues"));
+    const compatResult: TaskResult = getCompattibilityResult(totalIssues);
+    const colorCode: string = getColorCode(totalIssues);
+    const resultText = totalIssues != 0 ?
+        `There were ${ totalIssues } differences between the assemblies` :
         `No differences were found between the assemblies` ;
     
-    console.log(result.body + colorCode + 'Total Issues : ' + result.totalIssues);
+    console.log(body + colorCode + 'Total Issues : ' + totalIssues);
     setResult(compatResult, resultText);
 }
 
@@ -68,10 +70,12 @@ const getColorCode = (totalIssues: number): string => {
             : "\x1b[33m";
 }
 
-const parseResult = (message: string): CommandLineResult => {
-    const indexOfResult: number = message.indexOf("Total Issues");
-    return new CommandLineResult(message.substring(0, indexOfResult - 1),
-        message.substring(indexOfResult));
+const getTotalIssues = (message: string, indexOfResult: number): number => {
+    return parseInt(message.substring(indexOfResult).split(':')[1].trim(), 10);
+}
+
+const getBody = (message: string, indexOfResult: number): string => {
+    return message.substring(0, indexOfResult - 1);
 }
 
 run();
