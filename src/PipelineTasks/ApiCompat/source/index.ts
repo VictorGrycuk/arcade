@@ -2,20 +2,20 @@ import { join, parse } from 'path'
 import { getInput, setResult, TaskResult } from 'azure-pipelines-task-lib';
 import { execSync } from "child_process";
 import { existsSync } from 'fs';
-import CommandLineResult from './commandLineResult';
 
 const run = (): void => {
     // Create ApiCompat path
     const ApiCompatPath = join(__dirname, 'ApiCompat', 'Microsoft.DotNet.ApiCompat.exe');
     
     // Show the ApiCompat version
-    console.log(execSync(`"${ApiCompatPath}" --version`).toString());
+    console.log(execSync(`"${ ApiCompatPath }" --version`).toString());
     
     // Get the binaries to compare and create the command to run
     const inputFiles: string = getInputFiles();
-    const command = `"${ApiCompatPath}" "${inputFiles}" --impl-dirs "${getInput('implFolder')}" ${getOptions()}`;
+    const command = `"${ ApiCompatPath }" "${ inputFiles }" --impl-dirs "${ getInput('implFolder') }" ${ getOptions() }`;
 
     // Run the ApiCompat command
+    console.log(command);
     runCommand(command);
 }
 
@@ -34,15 +34,15 @@ const getInputFiles = (): string => {
 
 const runCommand = (command: string): void => {
     const result = execSync(command).toString();
-    const totalIssues: number = getTotalIssues(result, result.indexOf("Total Issues"));
+    const issuesCount: number = getTotalIssues(result, result.indexOf("Total Issues"));
     const body: string = getBody(result, result.indexOf("Total Issues"));
-    const compatResult: TaskResult = getCompattibilityResult(totalIssues);
-    const colorCode: string = getColorCode(totalIssues);
-    const resultText = totalIssues != 0 ?
-        `There were ${ totalIssues } differences between the assemblies` :
+    const compatResult: TaskResult = getCompattibilityResult(issuesCount);
+    const colorCode: string = getColorCode(issuesCount);
+    const resultText = issuesCount != 0 ?
+        `There were ${ issuesCount } differences between the assemblies` :
         `No differences were found between the assemblies` ;
     
-    console.log(body + colorCode + 'Total Issues : ' + totalIssues);
+    console.log(body + colorCode + 'Total Issues : ' + issuesCount);
     setResult(compatResult, resultText);
 }
 
