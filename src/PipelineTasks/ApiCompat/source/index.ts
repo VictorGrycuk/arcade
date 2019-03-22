@@ -1,31 +1,25 @@
-import { join } from 'path'
+import { join, parse } from 'path'
 import { getInput, setResult, TaskResult } from 'azure-pipelines-task-lib';
 import { execSync } from "child_process";
 import { existsSync } from 'fs';
-import CommandLineResult from './commandLineResult';
 
-run();
-
-function run(): void {
+const run = (): void => {
     // Create ApiCompat path
     const ApiCompatPath = join(__dirname, 'ApiCompat', 'Microsoft.DotNet.ApiCompat.exe');
     
     // Show the ApiCompat version
-    console.log(execSync(`"${ApiCompatPath}" --version`).toString());
+    console.log(execSync(`"${ ApiCompatPath }" --version`).toString());
     
     // Get the binaries to compare and create the command to run
     const inputFiles: string = getInputFiles();
-    const command = `"${ApiCompatPath}" "${inputFiles}" --impl-dirs "${getInput('implFolder')}"`;
+    const command = `"${ApiCompatPath}" "${inputFiles}" --impl-dirs "${getInput('implFolder')}" ${getOptions()}`;
 
     // Run the ApiCompat command
-    if (getInput('failOnIssue') === 'true') {
-        runWithError(command);
-    } else {
-        runWithWarning(command);
-    }
+    console.log(command);
+    runCommand(command);
 }
 
-function getInputFiles(): string {
+const getInputFiles = (): string => {
     const filesName: string[] = [];
 
     getInput('contractsFileName').split(' ').forEach(file => {
@@ -38,50 +32,50 @@ function getInputFiles(): string {
     return filesName.join(',');
 }
 
-function runWithWarning(command: string): void {
-    let result = parseResult(execSync(command).toString());
-    if (result.totalIssues > 0) {
-            console.log(result.body);
-            console.log("\x1b[33m", "Total Issues : " + result.totalIssues);
-            setResult(TaskResult.SucceededWithIssues, `There were ${ result.totalIssues } differences between the assemblies`);
-    } else {
-        console.log(result.body);
-        console.log("\x1b[32m", "Total Issues : " +  result.totalIssues);
-        setResult(TaskResult.Succeeded, `There were no differences between the assemblies`);
-    }
+const runCommand = (command: string): void => {
+    const result = execSync(command).toString();
+    const issuesCount: number = getTotalIssues(result, result.indexOf("Total Issues"));
+    const body: string = getBody(result, result.indexOf("Total Issues"));
+    const compatResult: TaskResult = getCompattibilityResult(issuesCount);
+    const colorCode: string = getColorCode(issuesCount);
+    const resultText = issuesCount != 0 ?
+        `There were ${ issuesCount } differences between the assemblies` :
+        `No differences were found between the assemblies` ;
+    
+    console.log(body + colorCode + 'Total Issues : ' + issuesCount);
+    setResult(compatResult, resultText);
 }
 
-function runWithError(command: string): void {
-    let result: CommandLineResult;
-
-    command = addOptions(command);
-    try {
-        result = parseResult(execSync(command).toString());
-
-        if (result.totalIssues > 0) {
-            console.log(result.body);
-            console.log("\x1b[31m", "Total Issues : " + result.totalIssues);
-            setResult(TaskResult.Failed, `There were ${result} differences between the assemblies`);
-        } else {
-            console.log(result.body);
-            console.log("\x1b[32m", "Total Issues : " +  result.totalIssues);
-            setResult(TaskResult.Succeeded, `There were no differences between the assemblies`);
-        }
-    } catch (error) {
-        setResult(TaskResult.Failed, `A problem ocurred: ${error.message}`);
-    }
-}
-
-function addOptions(command: string): string {
-    command += getInput('resolveFx') ? ' --resolve-fx' : '';
-    command += getInput('warnOnIncorrectVersion') ? ' --warn-on-incorrect-version' : '';
-    command += getInput('warnOnMissingAssemblies') ? ' --warn-on-missing-assemblies' : '';
+const getOptions = (): string => {
+    var command = getInput('resolveFx') === 'true' ? ' --resolve-fx' : '';
+    command += getInput('warnOnIncorrectVersion') === 'true' ? ' --warn-on-incorrect-version' : '';
+    command += getInput('warnOnMissingAssemblies') === 'true' ? ' --warn-on-missing-assemblies' : '';
 
     return command;
 }
 
-function parseResult(message: string): CommandLineResult {
-    const indexOfResult: number = message.indexOf("Total Issues");
-    return new CommandLineResult(message.substring(0, indexOfResult - 1),
-    message.substring(indexOfResult));
+const getCompattibilityResult = (totalIssues: number): TaskResult => {
+    return totalIssues === 0
+        ? TaskResult.Succeeded
+        : getInput('failOnIssue') === 'true'
+            ? TaskResult.Failed
+            : TaskResult.SucceededWithIssues;
 }
+
+const getColorCode = (totalIssues: number): string => {
+    return totalIssues === 0
+        ? "\x1b[32m"
+        : getInput('failOnIssue') === 'true'
+            ? "\x1b[31m"
+            : "\x1b[33m";
+}
+
+const getTotalIssues = (message: string, indexOfResult: number): number => {
+    return parseInt(message.substring(indexOfResult).split(':')[1].trim(), 10);
+}
+
+const getBody = (message: string, indexOfResult: number): string => {
+    return message.substring(0, indexOfResult - 1);
+}
+
+run();

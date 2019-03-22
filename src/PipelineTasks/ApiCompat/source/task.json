@@ -30,7 +30,7 @@
         {
             "name": "implFolder",
             "type": "filepath",
-            "label": "Implementaiton assemblies folder",
+            "label": "Implementation assemblies folder",
             "required": true,
             "helpMarkDown": "Sub directory inside the package folder where the binary can be found"
         },
