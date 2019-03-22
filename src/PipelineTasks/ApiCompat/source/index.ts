@@ -12,7 +12,7 @@ const run = (): void => {
     
     // Get the binaries to compare and create the command to run
     const inputFiles: string = getInputFiles();
-    const command = `"${ ApiCompatPath }" "${ inputFiles }" --impl-dirs "${ getInput('implFolder') }" ${ getOptions() }`;
+    const command = `"${ApiCompatPath}" "${inputFiles}" --impl-dirs "${getInput('implFolder')}" ${getOptions()}`;
 
     // Run the ApiCompat command
     console.log(command);
@@ -47,9 +47,9 @@ const runCommand = (command: string): void => {
 }
 
 const getOptions = (): string => {
-    var command = getInput('resolveFx') ? ' --resolve-fx' : '';
-    command += getInput('warnOnIncorrectVersion') ? ' --warn-on-incorrect-version' : '';
-    command += getInput('warnOnMissingAssemblies') ? ' --warn-on-missing-assemblies' : '';
+    var command = getInput('resolveFx') === 'true' ? ' --resolve-fx' : '';
+    command += getInput('warnOnIncorrectVersion') === 'true' ? ' --warn-on-incorrect-version' : '';
+    command += getInput('warnOnMissingAssemblies') === 'true' ? ' --warn-on-missing-assemblies' : '';
 
     return command;
 }
