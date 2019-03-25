@@ -35,6 +35,13 @@
             "helpMarkDown": "Sub directory inside the package folder where the binary can be found"
         },
         {
+            "name": "baselineFile",
+            "type": "filepath",
+            "label": "Baseline file",
+            "required": false,
+            "helpMarkDown": "File with known differences to ignore when comparing"
+        },
+        {
             "name": "failOnIssue",
             "type": "boolean",
             "label": "Fails on Issues",
