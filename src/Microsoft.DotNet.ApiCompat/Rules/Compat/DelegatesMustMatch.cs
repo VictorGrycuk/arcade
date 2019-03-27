@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -59,7 +59,12 @@ namespace Microsoft.Cci.Differs.Rules
         {
             int paramCount = implMethod.ParameterCount;
 
-            Debug.Assert(paramCount == contractMethod.ParameterCount);
+            if (paramCount != contractMethod.ParameterCount)
+            {
+                differences.AddIncompatibleDifference("DelegateParamCountMustMatch",
+                    $"Parameters count on delegate '{implMethod.ContainingType.FullName()}' is '{implMethod.ParameterCount}' in the {Implementation} but '{contractMethod.ContainingType.FullName()}' has {contractMethod.ParameterCount}"); //'{implMethod.ContainingType.FullName()}' is '{implParam.Name.Value}' in the {Implementation} but '{contractParam.Name.Value}' in the {Contract}.");
+                return false;
+            }
 
             IParameterDefinition[] implParams = implMethod.Parameters.ToArray();
             IParameterDefinition[] contractParams = contractMethod.Parameters.ToArray();
